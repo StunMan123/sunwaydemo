@@ -1,212 +1,199 @@
 /**
- * Demo Node.js Script (Runtime: Node.js 18)
- * Showcases various Node.js 18 features and capabilities
+ * Sunway Demo - Node.js 18 Web Server
+ * Port: 80
  */
 
-// Built-in fetch API (stable in Node 18)
-async function fetchDemo() {
-  console.log("📡 Fetch API Demo");
-  console.log("-".repeat(40));
+const http = require("http");
+const os = require("os");
+const { randomUUID } = require("crypto");
 
-  try {
-    const response = await fetch("https://jsonplaceholder.typicode.com/posts/1");
-    const data = await response.json();
-    console.log("Fetched post:", data.title);
-  } catch (error) {
-    console.log("Fetch error:", error.message);
-  }
-  console.log();
-}
+const PORT = 80;
 
-// Array methods demo
-function arrayMethodsDemo() {
-  console.log("📊 Array Methods Demo");
-  console.log("-".repeat(40));
-
-  const numbers = [1, 2, 3, 4, 5];
-
-  // Array.prototype.at() - access elements with negative indices
-  console.log("Last element using at(-1):", numbers.at(-1));
-
-  // Array.prototype.findLast() and findLastIndex()
-  const items = [
-    { name: "apple", type: "fruit" },
-    { name: "carrot", type: "vegetable" },
-    { name: "banana", type: "fruit" },
-  ];
-  const lastFruit = items.findLast((item) => item.type === "fruit");
-  console.log("Last fruit:", lastFruit?.name);
-  console.log();
-}
-
-// Object methods demo
-function objectMethodsDemo() {
-  console.log("🔧 Object Methods Demo");
-  console.log("-".repeat(40));
-
-  const entries = [
-    ["name", "Alice"],
-    ["age", 30],
-    ["city", "New York"],
-  ];
-  const person = Object.fromEntries(entries);
-  console.log("Object from entries:", person);
-
-  // Object.hasOwn() - safer alternative to hasOwnProperty
-  console.log("Has 'name' property:", Object.hasOwn(person, "name"));
-  console.log();
-}
-
-// String methods demo
-function stringMethodsDemo() {
-  console.log("📝 String Methods Demo");
-  console.log("-".repeat(40));
-
-  const text = "   Hello, Node.js 18!   ";
-  console.log("Original:", `"${text}"`);
-  console.log("trimStart():", `"${text.trimStart()}"`);
-  console.log("trimEnd():", `"${text.trimEnd()}"`);
-
-  // String.prototype.replaceAll()
-  const sentence = "foo bar foo baz foo";
-  console.log("replaceAll 'foo' with 'qux':", sentence.replaceAll("foo", "qux"));
-  console.log();
-}
-
-// Promise combinators demo
-async function promiseDemo() {
-  console.log("⏳ Promise Combinators Demo");
-  console.log("-".repeat(40));
-
-  const delay = (ms, value) =>
-    new Promise((resolve) => setTimeout(() => resolve(value), ms));
-
-  // Promise.all
-  const results = await Promise.all([
-    delay(100, "first"),
-    delay(50, "second"),
-    delay(75, "third"),
-  ]);
-  console.log("Promise.all results:", results);
-
-  // Promise.allSettled
-  const mixed = await Promise.allSettled([
-    Promise.resolve("success"),
-    Promise.reject(new Error("failure")),
-    Promise.resolve("another success"),
-  ]);
-  console.log(
-    "Promise.allSettled:",
-    mixed.map((r) => r.status)
-  );
-  console.log();
-}
-
-// Structured clone demo
-function structuredCloneDemo() {
-  console.log("📋 Structured Clone Demo");
-  console.log("-".repeat(40));
-
-  const original = {
-    name: "Test",
-    date: new Date(),
-    nested: { array: [1, 2, 3] },
-    map: new Map([["key", "value"]]),
-    set: new Set([1, 2, 3]),
+// Get system info
+function getSystemInfo() {
+  return {
+    hostname: os.hostname(),
+    platform: os.platform(),
+    arch: os.arch(),
+    cpus: os.cpus().length,
+    totalMemory: (os.totalmem() / 1024 / 1024 / 1024).toFixed(2) + " GB",
+    freeMemory: (os.freemem() / 1024 / 1024 / 1024).toFixed(2) + " GB",
+    uptime: (os.uptime() / 3600).toFixed(2) + " hours",
+    nodeVersion: process.version,
   };
-
-  // structuredClone - deep clone including special types
-  const clone = structuredClone(original);
-  clone.nested.array.push(4);
-
-  console.log("Original array:", original.nested.array);
-  console.log("Cloned array:", clone.nested.array);
-  console.log("Date preserved:", clone.date instanceof Date);
-  console.log("Map preserved:", clone.map instanceof Map);
-  console.log();
 }
 
-// Crypto API demo
-function cryptoDemo() {
-  console.log("🔐 Crypto API Demo");
-  console.log("-".repeat(40));
+// HTML Template
+function getHTML() {
+  const info = getSystemInfo();
+  const requestId = randomUUID();
+  const timestamp = new Date().toLocaleString();
 
-  const { randomUUID, randomBytes } = require("crypto");
-
-  console.log("Random UUID:", randomUUID());
-  console.log("Random bytes (hex):", randomBytes(16).toString("hex"));
-  console.log();
+  return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sunway Demo</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .container {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 16px;
+      padding: 40px;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .header h1 {
+      color: #1a1a2e;
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+    .header p {
+      color: #666;
+      font-size: 14px;
+    }
+    .badge {
+      display: inline-block;
+      background: #4CAF50;
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      margin-top: 10px;
+    }
+    .info-card {
+      background: #f8f9fa;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .info-card h3 {
+      color: #333;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #e0e0e0;
+    }
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .info-row:last-child { border-bottom: none; }
+    .info-label { color: #666; font-size: 13px; }
+    .info-value { color: #333; font-weight: 500; font-size: 13px; }
+    .footer {
+      text-align: center;
+      color: #999;
+      font-size: 12px;
+      margin-top: 20px;
+    }
+    .refresh-btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      background: #1a1a2e;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .refresh-btn:hover { background: #16213e; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🚀 Sunway Demo</h1>
+      <p>Node.js ${info.nodeVersion} Web Server</p>
+      <span class="badge">● Running on Port ${PORT}</span>
+    </div>
+    
+    <div class="info-card">
+      <h3>System Information</h3>
+      <div class="info-row">
+        <span class="info-label">Hostname</span>
+        <span class="info-value">${info.hostname}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Platform</span>
+        <span class="info-value">${info.platform} (${info.arch})</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">CPUs</span>
+        <span class="info-value">${info.cpus} cores</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Total Memory</span>
+        <span class="info-value">${info.totalMemory}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Free Memory</span>
+        <span class="info-value">${info.freeMemory}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Uptime</span>
+        <span class="info-value">${info.uptime}</span>
+      </div>
+    </div>
+    
+    <div class="info-card">
+      <h3>Request Info</h3>
+      <div class="info-row">
+        <span class="info-label">Request ID</span>
+        <span class="info-value" style="font-size: 11px;">${requestId}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Timestamp</span>
+        <span class="info-value">${timestamp}</span>
+      </div>
+    </div>
+    
+    <button class="refresh-btn" onclick="location.reload()">Refresh</button>
+    
+    <div class="footer">
+      Sunway Demo &copy; 2025
+    </div>
+  </div>
+</body>
+</html>
+`;
 }
 
-// Event emitter demo
-function eventEmitterDemo() {
-  console.log("📢 Event Emitter Demo");
-  console.log("-".repeat(40));
+// Create server
+const server = http.createServer((req, res) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
 
-  const { EventEmitter } = require("events");
+  res.writeHead(200, { "Content-Type": "text/html" });
+  res.end(getHTML());
+});
 
-  const emitter = new EventEmitter();
-
-  emitter.on("greet", (name) => {
-    console.log(`Hello, ${name}!`);
-  });
-
-  emitter.emit("greet", "World");
-  console.log();
-}
-
-// File system promises demo
-async function fsDemo() {
-  console.log("📁 File System (Promises) Demo");
-  console.log("-".repeat(40));
-
-  const fs = require("fs/promises");
-  const path = require("path");
-
-  const tempFile = path.join(__dirname, "temp-demo.txt");
-
-  try {
-    // Write file
-    await fs.writeFile(tempFile, "Hello from Node.js 18!");
-
-    // Read file
-    const content = await fs.readFile(tempFile, "utf-8");
-    console.log("File content:", content);
-
-    // Get file stats
-    const stats = await fs.stat(tempFile);
-    console.log("File size:", stats.size, "bytes");
-
-    // Clean up
-    await fs.unlink(tempFile);
-    console.log("Temp file cleaned up");
-  } catch (error) {
-    console.log("FS error:", error.message);
-  }
-  console.log();
-}
-
-// Main execution
-async function main() {
-  console.log("=".repeat(50));
-  console.log("🚀 Node.js 18 Demo Script");
-  console.log(`   Running on Node ${process.version}`);
-  console.log("=".repeat(50));
-  console.log();
-
-  arrayMethodsDemo();
-  objectMethodsDemo();
-  stringMethodsDemo();
-  structuredCloneDemo();
-  cryptoDemo();
-  eventEmitterDemo();
-  await fsDemo();
-  await promiseDemo();
-  await fetchDemo();
-
-  console.log("=".repeat(50));
-  console.log("✅ Demo completed!");
-  console.log("=".repeat(50));
-}
-
-main().catch(console.error);
+// Start server
+server.listen(PORT, () => {
+  console.log("=".repeat(45));
+  console.log("🚀 Sunway Demo Server");
+  console.log(`   Running on http://localhost:${PORT}`);
+  console.log(`   Node.js ${process.version}`);
+  console.log("=".repeat(45));
+});
