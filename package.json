@@ -1,0 +1,12 @@
+{
+  "name": "sunwaydemo",
+  "version": "1.0.0",
+  "description": "Sunway Demo Server",
+  "main": "sunway.js",
+  "scripts": {
+    "start": "node sunway.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
